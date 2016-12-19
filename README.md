@@ -30,15 +30,17 @@ $ gunicorn usnationaldebtchartgen:app
 
 From a browser, access the app using: [http://localhost:8000/chart](http://localhost:8000/chart)
 
-Optionally, you can specify the file extension (.png, .jpg, .pdf, or .svg) to access a specific output format.  For images and PDFs, you can also specify the image width (e.g., chart-1200.jpg for a 1200 pixel wide image).
+Optionally, you can specify the filename and file extension (.png, .jpg, .pdf, or .svg) to access a specific output format.  For images and PDFs, you can also specify the image width (e.g., bob-1200.jpg for a 1200 pixel wide JPEG image with a personalized filename).
 
 ## Example
 
 - [DebtToThePenny.com/chart](http://www.debttothepenny.com/chart) (Default, returns chart.png, 600x400.)
-- [DebtToThePenny.com/chart-800.png](http://www.debttothepenny.com/chart-800.png) (Returns 800 pixel wide image.)
-- [DebtToThePenny.com/chart.jpg](http://www.debttothepenny.com/chart.jpg) (Returns a JPEG image.)
-- [DebtToThePenny.com/chart.pdf](http://www.debttothepenny.com/chart.pdf) (Returns in the PDF format.)
-- [DebtToThePenny.com/chart.svg](http://www.debttothepenny.com/chart.svg) (Returns SVG+XML.)
+- [DebtToThePenny.com/chart/chart-800.png](http://www.debttothepenny.com/chart/chart-800.png) (Returns 800 pixel wide image.)
+- [DebtToThePenny.com/chart/chart.jpg](http://www.debttothepenny.com/chart/chart.jpg) (Returns a JPEG image.)
+- [DebtToThePenny.com/chart/chart.pdf](http://www.debttothepenny.com/chart/chart.pdf) (Returns in the PDF format.)
+- [DebtToThePenny.com/chart/chart.svg](http://www.debttothepenny.com/chart/chart.svg) (Returns SVG+XML.)
+- [DebtToThePenny.com/chart/Bob.jpg](http://www.debttothepenny.com/chart/Bob.jpg) (Returns JPEG image with the personalized filename Bob.jpg.)
+
 
 ## License
 
