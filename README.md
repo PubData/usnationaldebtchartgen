@@ -34,12 +34,12 @@ Optionally, you can specify the filename and file extension (.png, .jpg, .pdf, o
 
 ## Example
 
-- [DebtToThePenny.com/chart](http://www.debttothepenny.com/chart) (Default, returns chart.png, 600x400.)
-- [DebtToThePenny.com/chart/chart-800.png](http://www.debttothepenny.com/chart/chart-800.png) (Returns 800 pixel wide image.)
-- [DebtToThePenny.com/chart/chart.jpg](http://www.debttothepenny.com/chart/chart.jpg) (Returns a JPEG image.)
-- [DebtToThePenny.com/chart/chart.pdf](http://www.debttothepenny.com/chart/chart.pdf) (Returns in the PDF format.)
-- [DebtToThePenny.com/chart/chart.svg](http://www.debttothepenny.com/chart/chart.svg) (Returns SVG+XML.)
-- [DebtToThePenny.com/chart/Bob.jpg](http://www.debttothepenny.com/chart/Bob.jpg) (Returns JPEG image with the personalized filename Bob.jpg.)
+- [DebtToThePenny.com/chart](https://www.debttothepenny.com/chart) (Default, returns chart.png, 600x400.)
+- [DebtToThePenny.com/chart/chart-800.png](https://www.debttothepenny.com/chart/chart-800.png) (Returns 800 pixel wide image.)
+- [DebtToThePenny.com/chart/chart.jpg](https://www.debttothepenny.com/chart/chart.jpg) (Returns a JPEG image.)
+- [DebtToThePenny.com/chart/chart.pdf](https://www.debttothepenny.com/chart/chart.pdf) (Returns in the PDF format.)
+- [DebtToThePenny.com/chart/chart.svg](https://www.debttothepenny.com/chart/chart.svg) (Returns SVG+XML.)
+- [DebtToThePenny.com/chart/Bob.jpg](https://www.debttothepenny.com/chart/Bob.jpg) (Returns JPEG image with the personalized filename Bob.jpg.)
 
 
 ## License

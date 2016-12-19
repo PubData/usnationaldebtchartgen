@@ -1,7 +1,7 @@
 {
         credits: {
             text: 'DebtToThePenny.com',
-            href: 'http://www.DebtToThePenny.com'
+            href: 'https://www.DebtToThePenny.com'
         },
         title: {
             text: 'U.S. Public National Debt'
