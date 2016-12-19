@@ -5,15 +5,17 @@ import json
 from datetime import datetime, timedelta
 from flask import Flask, request as flask_request, send_file, abort
 from lxml import html
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
 
 
-@app.route('/chart', methods=['GET'])
-@app.route('/chart.<file_ext>', methods=['GET'])
-@app.route('/chart-<width_str>.<file_ext>', methods=['GET'])
-def chart(file_ext='png', width_str=None):
+@app.route('/chart/', methods=['GET'])
+@app.route('/chart/<filename>-<width_str>.<file_ext>', methods=['GET'])
+@app.route('/chart/<filename>.<file_ext>', methods=['GET'])
+@app.route('/chart/<filename>', methods=['GET'])
+def chart(filename='chart', file_ext='png', width_str=None):
     output_types = {
         'png': 'image/png',
         'jpg': 'image/jpeg',
@@ -89,9 +91,8 @@ def chart(file_ext='png', width_str=None):
     req = request.Request(url=url, data=data, headers=h)
     fd = request.urlopen(req)
     image_data = io.BytesIO(fd.read())
-    fn = cgi.parse_header(fd.headers['Content-Disposition'])[1]['filename']
 
     return send_file(
         image_data,
-        attachment_filename=fn,
+        attachment_filename=secure_filename('{}.{}'.format(filename, file_ext)),
         mimetype=fd.headers['Content-Type'])
