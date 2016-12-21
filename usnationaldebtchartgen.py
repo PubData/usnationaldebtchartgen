@@ -30,9 +30,9 @@ def chart(filename='chart', file_ext='png', width_str=None):
 	if file_ext and file_ext.lower() not in output_types:
 		abort(404)
 
-	# Read infile from filesystem into a variable.
-	with app.open_resource('data/infile.js', 'r') as f:
-		infile = f.read()
+	# Read options.js from filesystem into a variable.
+	with app.open_resource('data/options.js', 'r') as f:
+		options = f.read()
 
 	end_date = scrape_effective_date()
 	start_date = (end_date - timedelta(days=365))
@@ -40,11 +40,11 @@ def chart(filename='chart', file_ext='png', width_str=None):
 	# Prepare the post_data
 	h = {'Content-Type':'application/json', 'User-Agent': 'curl'}
 	post_data = {}
-	post_data['infile'] = \
+	post_data['options'] = \
 		'{}data: [\n{}\n{}'.format(
-			infile.split('data: [\n')[0],
-			render_to_infile(scrape_history_data(start_date, end_date)),
-			infile.split('data: [\n')[1])
+			options.split('data: [\n')[0],
+			render_to_options(scrape_history_data(start_date, end_date)),
+			options.split('data: [\n')[1])
 
 	if file_ext and file_ext != 'png':
 		post_data['type'] = output_types.get(file_ext.lower(), 'image/png')
@@ -115,9 +115,9 @@ def scrape_history_data(start_date, end_date):
 	return history_data
 
 
-def render_to_infile(history_data):
+def render_to_options(history_data):
 	# Produce a string containing the history data ready for insert into the
-	# infile that gets passed to the Highcharts export server.
+	# options string that gets passed to the Highcharts export server.
 	output = ''
 
 	for row in history_data:
