@@ -26,17 +26,17 @@ def chart(filename='chart', file_ext='png', width_str=None):
 		'svg+xml': 'image/svg+xml',
 		'xml': 'image/svg+xml',
 	}
-	
+
 	if file_ext and file_ext.lower() not in output_types:
 		abort(404)
-	
+
 	# Read infile from filesystem into a variable.
-	with app.open_resource('data/infile.js', 'r') as f:        
-		infile = f.read()    
+	with app.open_resource('data/infile.js', 'r') as f:
+		infile = f.read()
 
 	end_date = scrape_effective_date()
 	start_date = (end_date - timedelta(days=365))
-	
+
 	# Prepare the post_data
 	h = {'Content-Type':'application/json', 'User-Agent': 'curl'}
 	post_data = {}
@@ -53,11 +53,11 @@ def chart(filename='chart', file_ext='png', width_str=None):
 		post_data['scale'] = flask_request.args.get('scale')
 	if width_str and int(width_str) > 0:
 		post_data['width'] = int(width_str)
-		
+
 	post_data_json = json.dumps(post_data).encode('utf-8')
-	
+
 	req = request.Request(url=url, data=post_data_json, headers=h)
-	
+
 	with request.urlopen(req) as response:
 		mimetype = response.headers['Content-Type']
 		image_data = io.BytesIO(response.read())
@@ -70,7 +70,7 @@ def chart(filename='chart', file_ext='png', width_str=None):
 def scrape_effective_date():
 	# Scrape the "current" (effective) date from the U.S. Treasury site.
 	url = 'https://treasurydirect.gov/NP/debt/current'
-	
+
 	req = request.Request(url=url)
 
 	with request.urlopen(req) as response:
@@ -85,9 +85,9 @@ def scrape_history_data(start_date, end_date):
 	# Scrape history data from the search results of the US Treasury site.
 	url = (
 		"https://treasurydirect.gov/NP/debt/search?" +
-		"startMonth={}&startDay={}&startYear={}" + 
+		"startMonth={}&startDay={}&startYear={}" +
 		"&endMonth={}&endDay={}&endYear={}")
-		
+
 	url = url.format(
 			start_date.month,
 			start_date.day,
@@ -95,7 +95,7 @@ def scrape_history_data(start_date, end_date):
 			end_date.month,
 			end_date.day,
 			end_date.year)
-	
+
 	req = request.Request(url=url)
 
 	with request.urlopen(req) as response:
@@ -109,27 +109,27 @@ def scrape_history_data(start_date, end_date):
 		date = datetime.strptime(date_str, '%m/%d/%Y')
 		amount_str = row.xpath('./td')[3].xpath('text()')[0]
 		amount = float(amount_str.replace(',', ''))
-		
+
 		history_data.append({'date': date, 'amount': amount})
-		
+
 	return history_data
-				
+
 
 def render_to_infile(history_data):
-	# Produce a string containing the history data ready for insert into the  
+	# Produce a string containing the history data ready for insert into the
 	# infile that gets passed to the Highcharts export server.
-	output = '' 
+	output = ''
 
 	for row in history_data:
 		# Add row of data as:
 		# [Date.UTC(yyyy, mm, dd), amount],
 		date_str = 'Date.UTC({}, {}, {})'.format(
 			row['date'].year, row['date'].month - 1, row['date'].day)
-		
+
 		output += '[{}, {:.2f}],\n'.format(date_str, row['amount'])
-			
+
 	output = '{}'.format(output[:-2])  # On the last line, no comma.
-	
+
 	if output:
 		# Add newline on last line.
 		output += '\n'
