@@ -1,10 +1,11 @@
-from urllib import request
 import cgi
 import io
 import json
+import pathlib
 from datetime import datetime, timedelta
-from flask import Flask, request as flask_request, send_file, abort
+from urllib import request
 from lxml import html
+from flask import Flask, request as flask_request, send_file, abort
 from werkzeug.utils import secure_filename
 
 
@@ -34,7 +35,15 @@ def chart(filename='chart', file_ext='png', width_str=None):
 	with app.open_resource('data/options.js', 'r') as f:
 		options = f.read()
 
-	end_date = scrape_effective_date()
+	# Read callback.js from filesystem into a variable.
+	if pathlib.Path('data/callback.js').is_file():
+		with app.open_resource('data/callback.js', 'r') as f:
+			callback = f.read()
+
+	current = scrape_current()
+
+	end_date = current['date']
+	amount = float(current['amount'].replace(',', ''))
 	start_date = (end_date - timedelta(days=365))
 
 	# Prepare the post_data
@@ -45,6 +54,16 @@ def chart(filename='chart', file_ext='png', width_str=None):
 			options.split('data: [\n')[0],
 			render_to_options(scrape_history_data(start_date, end_date)),
 			options.split('data: [\n')[1])
+
+	if 'callback' in locals():
+		date_str = 'Date.UTC({}, {}, {})'.format(
+			end_date.year, end_date.month - 1, end_date.day)
+		post_data['callback'] = \
+			'{}{}{}'.format(
+				callback.split('As-Of:')[0],
+				'As-Of: {:%B %-d, %Y}<br>National Debt: ${:,.2f}'.format(
+					end_date, amount),
+				callback.split('National Debt:')[1])
 
 	if file_ext and file_ext != 'png':
 		post_data['type'] = output_types.get(file_ext.lower(), 'image/png')
@@ -67,7 +86,7 @@ def chart(filename='chart', file_ext='png', width_str=None):
 		attachment_filename=secure_filename('{}.{}'.format(filename, file_ext)),
 		mimetype=mimetype)
 
-def scrape_effective_date():
+def scrape_current():
 	# Scrape the "current" (effective) date from the U.S. Treasury site.
 	url = 'https://treasurydirect.gov/NP/debt/current'
 
@@ -77,8 +96,11 @@ def scrape_effective_date():
 		page = response.read()
 
 	tree = html.fromstring(page)
+
 	date_str = tree.xpath('//table[@class="data1"]/tr/td[1]/text()')[0]
-	return datetime.strptime(date_str, '%m/%d/%Y')
+	amount = tree.xpath('//table[@class="data1"]/tr/td[4]/text()')[0]
+
+	return {'date': datetime.strptime(date_str, '%m/%d/%Y'), 'amount': amount}
 
 
 def scrape_history_data(start_date, end_date):

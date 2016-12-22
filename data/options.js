@@ -6,9 +6,6 @@
         title: {
             text: 'U.S. Public National Debt'
         },
-        subtitle: {
-            text: ''
-        },
         legend: {
             enabled: false
         },
