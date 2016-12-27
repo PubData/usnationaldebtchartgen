@@ -1,10 +1,17 @@
 {
         credits: {
             text: 'DebtToThePenny.com',
-            href: 'https://www.DebtToThePenny.com'
         },
         title: {
             text: 'U.S. Public National Debt'
+        },
+        subtitle: {
+            text: '{{ date.strftime('%B %-d, %Y') }}'
+        },
+        labels: {
+            items: [{
+                html: '{{ "${:,.2f}".format(amount) }}'
+            }]
         },
         legend: {
             enabled: false
@@ -40,6 +47,10 @@
             name: 'National Debt',
             type: 'area',
             data: [
+                {% set comma = joiner(",") -%}
+                {% for row in history_data -%}
+                    {{ comma() }}[Date.UTC({{ row.date.year }}, {{ row.date.month - 1 }}, {{ row.date.day }}), {{ row.amount }}]
+                {% endfor %}
             ],
             threshold: null,
             fillColor: {

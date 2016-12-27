@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from urllib import request
 from lxml import html
 from flask import Flask, request as flask_request, send_file, abort
+import jinja2
 from werkzeug.utils import secure_filename
 
 
@@ -42,28 +43,20 @@ def chart(filename='chart', file_ext='png', width_str=None):
 
 	current = scrape_current()
 
-	end_date = current['date']
-	amount = float(current['amount'].replace(',', ''))
-	start_date = (end_date - timedelta(days=365))
+	start_date = (current['date'] - timedelta(days=365))
+	history_data = scrape_history_data(start_date, current['date'])
 
 	# Prepare the post_data
 	h = {'Content-Type':'application/json', 'User-Agent': 'curl'}
 	post_data = {}
 	post_data['options'] = \
-		'{}data: [\n{}\n{}'.format(
-			options.split('data: [\n')[0],
-			render_to_options(scrape_history_data(start_date, end_date)),
-			options.split('data: [\n')[1])
+		jinja2.Template(options).render({
+			'date': current.get('date'),
+			'amount': current.get('amount'),
+			'history_data': history_data})
 
 	if 'callback' in locals():
-		date_str = 'Date.UTC({}, {}, {})'.format(
-			end_date.year, end_date.month - 1, end_date.day)
-		post_data['callback'] = \
-			'{}{}{}'.format(
-				callback.split('As-Of:')[0],
-				'As-Of: {:%B %-d, %Y}<br>National Debt: ${:,.2f}'.format(
-					end_date, amount),
-				callback.split('National Debt:')[1])
+		post_data['callback'] = callback;
 
 	if file_ext and file_ext != 'png':
 		post_data['type'] = output_types.get(file_ext.lower(), 'image/png')
@@ -98,9 +91,11 @@ def scrape_current():
 	tree = html.fromstring(page)
 
 	date_str = tree.xpath('//table[@class="data1"]/tr/td[1]/text()')[0]
-	amount = tree.xpath('//table[@class="data1"]/tr/td[4]/text()')[0]
+	amount_str = tree.xpath('//table[@class="data1"]/tr/td[4]/text()')[0]
 
-	return {'date': datetime.strptime(date_str, '%m/%d/%Y'), 'amount': amount}
+	return {
+		'date': datetime.strptime(date_str, '%m/%d/%Y'),
+		'amount': float(amount_str.replace(',', ''))}
 
 
 def scrape_history_data(start_date, end_date):
@@ -135,25 +130,3 @@ def scrape_history_data(start_date, end_date):
 		history_data.append({'date': date, 'amount': amount})
 
 	return history_data
-
-
-def render_to_options(history_data):
-	# Produce a string containing the history data ready for insert into the
-	# options string that gets passed to the Highcharts export server.
-	output = ''
-
-	for row in history_data:
-		# Add row of data as:
-		# [Date.UTC(yyyy, mm, dd), amount],
-		date_str = 'Date.UTC({}, {}, {})'.format(
-			row['date'].year, row['date'].month - 1, row['date'].day)
-
-		output += '[{}, {:.2f}],\n'.format(date_str, row['amount'])
-
-	output = '{}'.format(output[:-2])  # On the last line, no comma.
-
-	if output:
-		# Add newline on last line.
-		output += '\n'
-
-	return output

@@ -1,18 +1,11 @@
 function(chart) {
     var ren = this.renderer;
 
-    ren.label('As-Of:<br>National Debt:', 100, 55)
-        .attr({
-            fill: 'rgba(0, 0, 0)',
-            padding: 8,
-            zIndex: 6
-        })
+    ren.label(chart.options.labels.items[0].html, 80, 59)
         .css({
-            fontSize: '14px',
-            lineHeight: '20px',
+            fontSize: '40px',
             fontWeight: 'bold',
-            color: 'white',
+            color: 'black',
         })
-        .add()
-        .shadow(true)
+        .add();
 }
