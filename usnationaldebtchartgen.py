@@ -41,7 +41,7 @@ def chart(filename='chart', file_ext='png', width_str=None):
 		with app.open_resource('data/callback.js', 'r') as f:
 			callback = f.read()
 
-	current = scrape_current()
+	current = query_debt_to_the_penny_api_current()
 
 	start_date = (current['date'] - timedelta(days=365))
 	history_data = scrape_history_data(start_date, current['date'])
@@ -79,23 +79,18 @@ def chart(filename='chart', file_ext='png', width_str=None):
 		attachment_filename=secure_filename('{}.{}'.format(filename, file_ext)),
 		mimetype=mimetype)
 
-def scrape_current():
-	# Scrape the "current" (effective) date from the U.S. Treasury site.
-	url = 'https://treasurydirect.gov/NP/debt/current'
 
-	req = request.Request(url=url)
+def query_debt_to_the_penny_api_current():
+	# The Data.gov catalog for this dataset:
+	#   http://catalog.data.gov/dataset/debt-to-the-penny
+	url="https://www.treasurydirect.gov/NP_WS/debt/current?format=json"
 
-	with request.urlopen(req) as response:
-		page = response.read()
-
-	tree = html.fromstring(page)
-
-	date_str = tree.xpath('//table[@class="data1"]/tr/td[1]/text()')[0]
-	amount_str = tree.xpath('//table[@class="data1"]/tr/td[4]/text()')[0]
+	response = request.urlopen(url).read().decode('utf8')
+	obj = json.loads(response)
 
 	return {
-		'date': datetime.strptime(date_str, '%m/%d/%Y'),
-		'amount': float(amount_str.replace(',', ''))}
+		'date': datetime.strptime(obj['effectiveDate'].strip(' EST'), '%B %d, %Y'),
+		'amount': obj['totalDebt']}
 
 
 def scrape_history_data(start_date, end_date):
