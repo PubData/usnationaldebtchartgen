@@ -1,5 +1,5 @@
 # usnationaldebtchartgen
-U.S. National Debt - Chart Generator
+U.S. National Public Debt - Chart Generator
 
 ## Synopsis
 Generate chart image, pdf, or SVG of the U.S. National Public Debt from data scraped from the U.S. Treasury website.

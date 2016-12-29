@@ -3,7 +3,7 @@
             text: 'DebtToThePenny.com',
         },
         title: {
-            text: 'U.S. Public National Debt'
+            text: 'U.S. National Public Debt'
         },
         subtitle: {
             text: '{{ date.strftime('%B %-d, %Y') }}'
@@ -44,7 +44,7 @@
             }
         }],
         series: [{
-            name: 'National Debt',
+            name: 'Public Debt',
             type: 'area',
             data: [
                 {% set comma = joiner(",") -%}
