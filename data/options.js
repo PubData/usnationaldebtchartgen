@@ -13,9 +13,6 @@
                 html: '{{ "${:,.2f}".format(amount) }}'
             }]
         },
-        legend: {
-            enabled: false
-        },
         exporting: {
             buttons: {
                 contextButton: {
@@ -27,22 +24,16 @@
             type: 'datetime',
             ordinal: false
         },
-        yAxis: [{
+        yAxis: {
             title: {
-                text: 'Debt Amount (Trillions)',
-                style: {
-                    color: Highcharts.getOptions().colors[0]
-                }
+                text: 'Amount (Trillions)',
             },
             labels: {
                 formatter: function () {
                     return '$' + (this.value / Math.pow(10, 12)).toFixed(1) + 'T';
-                },
-                style: {
-                    color: Highcharts.getOptions().colors[0]
                 }
             }
-        }],
+        },
         series: [{
             name: 'Public Debt',
             type: 'area',
@@ -65,5 +56,8 @@
                     [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
                 ]
             }
-        }]
+        }],
+        legend: {
+            enabled: false
+        }
 }
