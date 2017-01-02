@@ -1,24 +1,6 @@
 {
-        credits: {
-            text: 'DebtToThePenny.com',
-        },
         title: {
             text: 'U.S. National Public Debt'
-        },
-        subtitle: {
-            text: '{{ date.strftime('%B %-d, %Y') }}'
-        },
-        labels: {
-            items: [{
-                html: '{{ "${:,.2f}".format(amount) }}'
-            }]
-        },
-        exporting: {
-            buttons: {
-                contextButton: {
-                    enabled: false
-                }
-            }
         },
         xAxis: {
             type: 'datetime',
@@ -26,7 +8,7 @@
         },
         yAxis: {
             title: {
-                text: 'Amount (Trillions)',
+                text: 'Amount (Trillions)'
             },
             labels: {
                 formatter: function () {
@@ -57,6 +39,24 @@
                 ]
             }
         }],
+        credits: {
+            text: 'DebtToThePenny.com',
+        },
+        subtitle: {
+            text: '{{ date.strftime('%B %-d, %Y') }}'
+        },
+        labels: {
+            items: [{
+                html: '{{ "${:,.2f}".format(amount) }}'
+            }]
+        },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    enabled: false
+                }
+            }
+        },
         legend: {
             enabled: false
         }
